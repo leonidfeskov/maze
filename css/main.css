@@ -1,0 +1,79 @@
+body {
+	background-color: #f2f2f2;
+	margin: 0;
+	padding: 0;
+}
+
+.maze-wrap {
+	width: 750px;
+	height: 750px;
+	border: 2px solid #000;
+	margin: 0 auto;
+	position: relative;
+	overflow: hidden;
+}
+
+.maze {
+	background: #4b4a50;
+	overflow: hidden;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	transition: all 0.1s linear 0s;
+}
+
+.maze__cell {
+	position: relative;
+	background: url(../i/bg.png) repeat 0 0;
+	background-size: 100% 100%;
+	box-sizing: border-box;
+	width: 150px;
+	height: 150px;
+	float: left;
+}
+
+.maze__cell_way_0000 {background-image: url(../i/way_0000.png);}
+
+.maze__cell_way_1000 {background-image: url(../i/way_1000.png);}
+.maze__cell_way_0100 {background-image: url(../i/way_0100.png);}
+.maze__cell_way_0010 {background-image: url(../i/way_0010.png);}
+.maze__cell_way_0001 {background-image: url(../i/way_0001.png);}
+
+.maze__cell_way_1100 {background-image: url(../i/way_1100.png);}
+.maze__cell_way_0110 {background-image: url(../i/way_0110.png);}
+.maze__cell_way_0011 {background-image: url(../i/way_0011.png);}
+.maze__cell_way_1001 {background-image: url(../i/way_1001.png);}
+
+.maze__cell_way_1010 {background-image: url(../i/way_1010.png);}
+.maze__cell_way_0101 {background-image: url(../i/way_0101.png);}
+
+.maze__cell_way_1110 {background-image: url(../i/way_1110.png);}
+.maze__cell_way_0111 {background-image: url(../i/way_0111.png);}
+.maze__cell_way_1011 {background-image: url(../i/way_1011.png);}
+.maze__cell_way_1101 {background-image: url(../i/way_1101.png);}
+
+.maze__cell_way_1111 {background-image: url(../i/way_1111.png);}
+
+.maze__cell_exit:after {
+	content: "EXIT";
+	display: block;
+	font-size: 30px;
+	font-weight: bold;
+	color: green;
+	line-height: 150px;
+	text-align: center;
+}
+
+.player {
+	background: url(../i/player.png) no-repeat 0 0;
+	background-size: 100% 100%;
+	width: 150px;
+	height: 150px;
+	position: absolute;
+	transition: left 0.2s linear 0s, top 0.2s linear 0s;
+	z-index: 10;
+}
+
+.player.player_left {
+	transform: scaleX(-1);
+}
