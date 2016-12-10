@@ -1,15 +1,22 @@
 define([
     'jquery',
     'backbone',
-    'utils/utils'
-], function($, Backbone, Utils) {
+    'settings',
+    'utils/utils',
+    'textures'
+], function(
+    $,
+    Backbone,
+    Settings,
+    Utils,
+    textures
+) {
     var MazeView = Backbone.View.extend({
         el: $('.js-maze'),
 
         initialize: function() {
-            var cellSize = this.model.get('cellSize');
-            this.el.style.width = (this.model.get('width') * cellSize) + 'px';
-            this.el.style.height = (this.model.get('height') * cellSize) + 'px';
+            this.el.style.width = (this.model.get('width') * Settings.CELL_SIZE) + 'px';
+            this.el.style.height = (this.model.get('height') * Settings.CELL_SIZE) + 'px';
 
             this.render();
         },
@@ -20,24 +27,34 @@ define([
             var height = this.model.get('height');
             var exit = this.model.get('exit');
 
-            for (var y = 0; y < height; y++) {
-                for (var x = 0; x < width; x++) {
-                    var cell = document.createElement('div');
-                    cell.setAttribute('data-coord', y + '-' + x);
-                    if (map[y][x].type === 'wall' ) {
-                        cell.className = 'maze__cell';
-                    } else {
-                        cell.className ='maze__cell maze__cell_way maze__cell_way_' + this.getWayType(y, x);
-                    }
-                    this.el.appendChild(cell);
-                }
-            }
+            var canvas = document.querySelector('.js-maze-map');
+            canvas.width = Settings.WIDTH * Settings.CELL_SIZE;
+            canvas.height = Settings.HEIGHT * Settings.CELL_SIZE;
+            this.ctx = canvas.getContext('2d');
 
-            $('.maze__cell[data-coord="' + exit.join('-') + '"]').addClass('maze__cell_exit');
+            textures.promise
+                .then(
+                    function result(){
+                        for (var y = 0; y < height; y++) {
+                            for (var x = 0; x < width; x++) {
+                                this.ctx.drawImage(
+                                    textures.way[this.getWayType(y, x)],
+                                    x * Settings.CELL_SIZE,
+                                    y * Settings.CELL_SIZE,
+                                    Settings.CELL_SIZE,
+                                    Settings.CELL_SIZE
+                                );
+                            }
+                        }
+                    }.bind(this)
+                );
         },
 
         getWayType: function(y, x) {
             var map = this.model.get('map');
+            if (map[y][x].type === 'wall') {
+                return '0000';
+            }
             var str = '';
             str += (Utils.isInScope(map, [x, y-1]) && map[y-1][x].type === 'way' ) ? '1' : '0';
             str += (Utils.isInScope(map, [x+1, y]) && map[y][x+1].type === 'way' ) ? '1' : '0';
@@ -47,10 +64,10 @@ define([
         },
 
         screenPosition: function(x, y) {
-            var screensCount = this.model.get('width')/5;
-            var offset = this.model.get('cellSize')*5;
-            var screenX = Math.floor(x/5);
-            var screenY = Math.floor(y/5);
+            var screensCount = this.model.get('width') / Settings.CELLS_ON_SCREEN;
+            var offset = Settings.CELL_SIZE * Settings.CELLS_ON_SCREEN;
+            var screenX = Math.floor(x / Settings.CELLS_ON_SCREEN);
+            var screenY = Math.floor(y / Settings.CELLS_ON_SCREEN);
             this.el.style.left = -(offset * screenX) + 'px'
             this.el.style.bottom = -(offset * (screensCount - screenY - 1)) + 'px'
         }

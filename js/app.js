@@ -26,6 +26,8 @@ require.config({
 
 require([
     'jquery',
+    'backbone',
+    'settings',
     'utils/utils',
     'models/maze',
     'models/player',
@@ -33,29 +35,39 @@ require([
     'views/player'
 ], function(
     $,
+    Backbone,
+    Settings,
     Utils,
-    Maze,
-    Player,
+    MazeModel,
+    PlayerModel,
     MazeView,
     PlayerView
 ){
     'use strict';
 
-    var mazeView = new MazeView({model: Maze});
-    var playerView = new PlayerView({model: Player});
+    var maze = new MazeModel();
+    var player = new PlayerModel();
 
-    Maze.on('change', function() {
+    var mazeView = new MazeView({model: maze});
+    var playerView = new PlayerView({model: player});
+
+    maze.on('change', function() {
         mazeView.render();
     });
-    Player.on('change', function() {
-        playerView.render();
-        mazeView.screenPosition(Player.get('x'), Player.get('y'));
+
+    player.on('change:x change:y', function() {
+        playerView.renderPosition();
+        mazeView.screenPosition(player.get('x'), player.get('y'));
         checkWin();
     });
 
+    player.on('change:direction', function() {
+        playerView.renderDirection();
+    });
+
     function checkWin() {
-        var exit = Maze.get('exit');
-        if (Player.get('x') === exit[1] && Player.get('y') === exit[0]) {
+        var exit = maze.get('exit');
+        if (player.get('x') === exit[1] && player.get('y') === exit[0]) {
             alert('You Win!');
         }
     }
@@ -63,39 +75,24 @@ require([
     $(document).on('keydown', function(e) {
         if (37 <= e.keyCode && e.keyCode <= 40) {
             e.preventDefault();
+            if (player.get('isMove')) {
+                return;
+            }
         }
-        var x = Player.get('x');
-        var y = Player.get('y');
-        var map = Maze.get('map');
+        var map = maze.get('map');
 
         switch (e.keyCode) {
             case 37:
-                // Left;
-                Player.set('direction', 'left');
-                if (Utils.isInScope(map, [x-1, y]) && map[y][x-1].type !== 'wall') {
-                    Player.set('x', x-1);
-                }
+                player.move('left', map);
                 break;
             case 38:
-                // Up;
-                Player.set('direction', 'up');
-                if (Utils.isInScope(map, [x, y-1]) && map[y-1][x].type !== 'wall') {
-                    Player.set('y', y-1);
-                }
+                player.move('up', map);
                 break;
             case 39:
-                // Right;
-                Player.set('direction', 'right');
-                if (Utils.isInScope(map, [x+1, y]) && map[y][x+1].type !== 'wall') {
-                    Player.set('x', x+1);
-                }
+                player.move('right', map);
                 break;
             case 40:
-                // Down;
-                Player.set('direction', 'down');
-                if (Utils.isInScope(map, [x, y+1]) && map[y+1][x].type !== 'wall') {
-                    Player.set('y', y+1);
-                }
+                player.move('down', map);
                 break;
             default:
                 break;
@@ -103,6 +100,3 @@ require([
 
     });
 });
-
-
-

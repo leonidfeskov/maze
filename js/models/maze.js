@@ -1,24 +1,27 @@
 define([
     'jquery',
     'backbone',
+    'settings',
     'generateMaze'
-], function($, Backbone, generateMaze) {
-    var size = 15;
-
+], function(
+    $,
+    Backbone,
+    Settings,
+    generateMaze
+) {
     var Cell = function(type) {
         this.type = type;
     };
 
     var Maze = Backbone.Model.extend({
         defaults: {
-            width: size,
-            height: size,
-            cellSize: 150,
-            exit: [0, size - 1]
+            width: Settings.WIDTH,
+            height: Settings.HEIGHT,
+            exit: [0, Settings.WIDTH - 1]
         },
 
         initialize: function() {
-            var map = generateMaze(size, size);
+            var map = generateMaze(Settings.WIDTH, Settings.HEIGHT);
             this.map = [];
             for (var y = 0; y < this.get('height'); y++) {
                 this.map[y] = [];
@@ -35,5 +38,5 @@ define([
         }
     });
 
-    return new Maze;
+    return Maze;
 });
