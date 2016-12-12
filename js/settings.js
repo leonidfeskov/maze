@@ -4,6 +4,7 @@ define([], function(){
         HEIGHT: 15,
         CELL_SIZE: 120,
         CELLS_ON_SCREEN: 5,
-        SPEED: 200
+        SPEED: 200,
+        LOCK_OFFSET: 10
     }
 });

@@ -1,7 +1,7 @@
 define([
     'jquery',
     'backbone',
-    'Settings',
+    'settings',
     'utils/utils'
 ], function(
     $,

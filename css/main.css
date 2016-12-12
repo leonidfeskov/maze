@@ -89,9 +89,9 @@ body {
 }
 
 .lock {
-	background: gray;
-	width: 400px;
-	height: 400px;
+	background: url(../i/lock.png) no-repeat 0 0;
+	width: 300px;
+	height: 300px;
 	position: absolute;
 	left: 50%;
 	top: 50%;
@@ -100,22 +100,56 @@ body {
 
 .lock__bolts {
 	position: relative;
-	height: 50%;
-	margin: 0 25px;
+	top: 65px;
+	width: 177px;
+	height: 100px;
+	margin: 0 auto;
+	overflow: hidden;
 }
 
 .lock__bolt {
-	background: #fff;
-	border: 1px solid #000;
+	background: url(../i/bolt.png) no-repeat 0 0;
 	box-sizing: border-box;
-	width: 50px;
+	width: 20px;
 	height: 100%;
 	position: relative;
-	top: 0;
+	bottom: 0;
 	float: left;
-	margin: 0 10px;
+	margin-left: 12px;
 }
 
 .lock__bolt_active {
-	border-color: red;
+	
+}
+
+.lock__bolt_true {
+	animation: shake 0.1s infinite;
+}
+
+.lock__bolt_unlocked {
+	border-color: green;
+}
+
+@keyframes shake {
+	0% {left: 0;}
+	50% {left: 1px;}
+	100% {left: 0px;}
+}
+
+.lock__passkey-wrap {
+	height: 100px;
+	position: absolute;
+	bottom: 100px;
+	left: -221px;
+}
+
+.lock__passkey {
+	background: url(../i/key.png) no-repeat 0 100%;
+	width: 312px;
+	height: 36px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	z-index: 1;
+	transition: left 0.2s ease 0s;
 }

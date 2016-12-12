@@ -1,7 +1,7 @@
 define([
     'jquery',
     'backbone',
-    'Settings',
+    'settings',
     'utils/utils'
 ], function(
     $,
@@ -14,7 +14,7 @@ define([
             code: [],
             activeBolt: 0,
             complexity: 'easy',
-            boltWidth: 50
+            boltWidth: 20
         },
 
         initialize: function() {
