@@ -1,2 +1,2 @@
 # maze
-Maze game
+https://leonidfeskov.github.io/maze/
