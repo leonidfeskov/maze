@@ -18,7 +18,7 @@ define([
         textures.way[key] = img;
     }
 
-    textures.promise = new Promise(function(resolve, reject){
+    textures.onload = new Promise(function(resolve, reject){
         var isLoaded = Object.keys(textures.way).every(function(texture){
             var img = textures.way[texture];
             img.onload = function(){
@@ -27,7 +27,9 @@ define([
             return img.onload();
         });
         if (isLoaded) {
-            resolve('result');
+            resolve();
+        } else {
+            reject();
         }
     });
 

@@ -32,9 +32,9 @@ define([
             canvas.height = Settings.HEIGHT * Settings.CELL_SIZE;
             this.ctx = canvas.getContext('2d');
 
-            textures.promise
+            textures.onload
                 .then(
-                    function result(){
+                    function() {
                         for (var y = 0; y < height; y++) {
                             for (var x = 0; x < width; x++) {
                                 this.ctx.drawImage(
@@ -46,7 +46,10 @@ define([
                                 );
                             }
                         }
-                    }.bind(this)
+                    }.bind(this),
+                    function() {
+                        console.log('Error. Textures is not loaded')
+                    }
                 );
         },
 

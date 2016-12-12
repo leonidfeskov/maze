@@ -31,8 +31,10 @@ require([
     'utils/utils',
     'models/maze',
     'models/player',
+    'models/lock',
     'views/maze',
-    'views/player'
+    'views/player',
+    'views/lock'
 ], function(
     $,
     Backbone,
@@ -40,8 +42,10 @@ require([
     Utils,
     MazeModel,
     PlayerModel,
+    LockModel,
     MazeView,
-    PlayerView
+    PlayerView,
+    LockView
 ){
     'use strict';
 
@@ -97,6 +101,9 @@ require([
             default:
                 break;
         }
-
     });
+
+
+    var lock = new LockModel();
+    var lockView = new LockView({model: lock});
 });
