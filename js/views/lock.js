@@ -17,49 +17,83 @@ define([
         },
 
         initialize: function() {
+            this.cssClasses = {
+                active: 'lock__bolt_active',
+                corrected: 'lock__bolt_corrected',
+                unlocked: 'lock__bolt_unlocked'
+            };
+            this.$key = this.$('.lock__passkey');
             this.$bolts = this.$('.lock__bolt');
+
+            this.boltWidth = 20;
             this.boltsPosition = this.$bolts.map(function(i, item){
                 return $(item).offset().left;
             });
-            this.boltWidth = this.model.get('boltWidth');
-
-            this.$key = this.$('.lock__passkey');
 
             this.code = this.model.get('code');
-
-            this.activeBoltIndex = this.model.get('activeBolt');
+            this.activeBoltIndex = 0;
             this.$activeBolt = this.$bolts.eq(this.activeBoltIndex);
-            this.unlocked = [];
 
-            this.model.bind('change:activeBolt', this.renderActiveBolt, this);
+            this.model.on('change:lokedPinCount', this.checkWin, this);
+
+            this.timer();
+        },
+
+        timer: function(){
+            var time = this.model.get('time');
+            this.$('.lock__timer-progress').css({
+                transitionDuration: time + 'ms',
+                width: '100%'
+            });
+
+            window.setTimeout(function(){
+                alert('Время вышло');
+            }.bind(this), time);
+        },
+
+        checkWin: function() {
+            if (this.model.get('lokedPinCount') === 5) {
+                alert('Unlocked');
+            }
+        },
+
+        moveKey: function() {
+            this.$activeBolt = this.$bolts.eq(this.activeBoltIndex);
+            this.$bolts.removeClass(this.cssClasses.active);
+            this.$activeBolt.addClass(this.cssClasses.active);
+
+            this.$key.css({
+                left: this.$activeBolt.position().left
+            })
         },
 
         chooseBolt: function(e) {
-            if (this.isPresedBolt) {
+            if (this.isPressed) {
                 return
             }
             var mouseX = e.pageX;
             for (var i = 0; i < 5; i++) {
                 var boltPosition = this.boltsPosition[i];
                 if (boltPosition <= mouseX && mouseX <= boltPosition + this.boltWidth) {
-                    this.model.set('activeBolt', i);
-                    this.activeCode = this.code[i];
+                    this.activeBoltIndex = i;
+                    this.moveKey();
                     return;
                 }
             }
         },
 
         pressBolt: function() {
-            if (this.unlocked.indexOf(this.model.get('activeBolt')) !== -1) {
+            if (this.$activeBolt.hasClass(this.cssClasses.unlocked)) {
                 return;
             }
-            this.isPresedBolt = true;
+            var targetCode = this.model.get('code')[this.activeBoltIndex];
+            this.isPressed = true;
             this.activeBoltPos = 0;
             this.pressBoltInterval = setInterval(function() {
                 if (this.activeBoltPos >= 100) {
                     clearInterval(this.pressBoltInterval);
                 }
-                this.activeBoltPos += 1;
+                this.activeBoltPos += 1.5;
                 this.$activeBolt.css({
                     bottom: this.activeBoltPos + '%'
                 });
@@ -67,31 +101,33 @@ define([
                     bottom: this.activeBoltPos + '%'
                 });
 
-                if (this.activeCode <= this.activeBoltPos && this.activeBoltPos <= this.activeCode + Settings.LOCK_OFFSET) {
-                    this.$activeBolt.addClass('lock__bolt_true');
+                if (targetCode <= this.activeBoltPos && this.activeBoltPos <= targetCode + Settings.LOCK_OFFSET) {
+                    this.$activeBolt.addClass(this.cssClasses.corrected);
                 }
-                if (this.activeBoltPos > this.activeCode + Settings.LOCK_OFFSET) {
+                if (this.activeBoltPos > targetCode + Settings.LOCK_OFFSET) {
                     this.$activeBolt.css({
                         bottom: 0
-                    }).removeClass('lock__bolt_true');
+                    }).removeClass(this.cssClasses.corrected);
                     this.$key.css({
                         bottom: 0
                     });
                     clearInterval(this.pressBoltInterval);
                 }
-
             }.bind(this), 1000/24);
         },
 
         stopBolt: function() {
-
+            if (this.$activeBolt.hasClass(this.cssClasses.unlocked)) {
+                return;
+            }
+            var targetCode = this.model.get('code')[this.activeBoltIndex];
             clearInterval(this.pressBoltInterval);
-            this.isPresedBolt = false;
-            this.$activeBolt.removeClass('lock__bolt_true');
+            this.isPressed = false;
+            this.$activeBolt.removeClass(this.cssClasses.corrected);
 
-            if (this.activeCode <= this.activeBoltPos && this.activeBoltPos <= this.activeCode + Settings.LOCK_OFFSET) {
-                this.$activeBolt.addClass('lock__bolt_unlocked');
-                this.unlocked.push(this.activeBoltIndex);
+            if (targetCode <= this.activeBoltPos && this.activeBoltPos <= targetCode + Settings.LOCK_OFFSET) {
+                this.model.lockedPin();
+                this.$activeBolt.addClass(this.cssClasses.unlocked);
             } else {
                  this.$activeBolt.css({
                     bottom: 0
@@ -100,20 +136,7 @@ define([
             this.$key.css({
                 bottom: 0
             });
-        },
-
-        renderActiveBolt: function() {
-            this.activeBoltIndex = this.model.get('activeBolt');
-            this.$activeBolt = this.$bolts.eq(this.activeBoltIndex);
-            this.$bolts.removeClass('lock__bolt_active');
-            this.$activeBolt.addClass('lock__bolt_active');
-
-            this.$key.css({
-                left: this.$activeBolt.position().left
-            })
         }
-
-
     });
 
     return LockView;
