@@ -31,10 +31,10 @@ require([
     'utils/utils',
     'models/maze',
     'models/player',
-    'models/lock',
+    //'models/lock',
     'views/maze',
-    'views/player',
-    'views/lock'
+    'views/player'
+    //'views/lock'
 ], function(
     $,
     Backbone,
@@ -42,10 +42,10 @@ require([
     Utils,
     MazeModel,
     PlayerModel,
-    LockModel,
+    //LockModel,
     MazeView,
     PlayerView,
-    LockView
+    //LockView
 ){
     'use strict';
 
