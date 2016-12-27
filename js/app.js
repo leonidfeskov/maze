@@ -104,6 +104,6 @@ require([
     });
 
 
-    var lock = new LockModel();
-    var lockView = new LockView({model: lock});
+    //var lock = new LockModel();
+    //var lockView = new LockView({model: lock});
 });
