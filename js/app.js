@@ -44,7 +44,7 @@ require([
     PlayerModel,
     //LockModel,
     MazeView,
-    PlayerView,
+    PlayerView
     //LockView
 ){
     'use strict';
